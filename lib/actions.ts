@@ -1,8 +1,6 @@
-"use server";
-
-export async function authenticate(formData: FormData) {
+export async function authenticate(values: any) {
   try {
-    console.log(formData);
+    console.log(values);
   } catch (err) {
     if (err) {
       console.log("Error: ", err);
