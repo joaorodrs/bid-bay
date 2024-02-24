@@ -24,11 +24,11 @@ export async function authenticate(body: string) {
     },
   });
 
-  if (!user) return;
+  if (!user) throw new Error("user not found, check your credentials");
 
   const match = await comparePasswords(user.password, parsedLogin.password);
 
-  if (!match) return;
+  if (!match) throw new Error("invalid credentials");
 
   cookies().set("currentUser", JSON.stringify(user));
   await db.$disconnect();

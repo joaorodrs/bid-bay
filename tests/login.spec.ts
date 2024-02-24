@@ -1,65 +1,90 @@
 import { test, expect } from "@playwright/test";
 
-test("should render login form", async ({ page }) => {
-  await page.goto("/auth/login");
+import { hashPassword } from "@/lib/auth";
+import { db } from "@/lib/database";
 
-  await expect(page.getByLabel("E-mail")).toBeVisible();
-  await expect(page.getByLabel("Senha")).toBeVisible();
-  await expect(page.getByText("Entrar")).toBeVisible();
-});
+const testName = "Test User";
+const testMail = "test@test.com";
+const testPassword = "test123";
 
-test("should validate login form values", async ({ page, context }) => {
-  await page.goto("/auth/login");
+test.describe("login", () => {
+  test("should render login form", async ({ page }) => {
+    await page.goto("/auth/login");
 
-  const emailInput = page.getByLabel("E-mail");
-  const passwordInput = page.getByLabel("Senha");
-  const submitButton = page.getByText("Entrar");
+    await expect(page.getByLabel("e-mail")).toBeVisible();
+    await expect(page.getByLabel("password")).toBeVisible();
+    await expect(page.getByText("enter")).toBeVisible();
+  });
 
-  await submitButton.click();
+  test("should validate login form values", async ({ page }) => {
+    await page.goto("/auth/login");
 
-  await expect(emailInput).toHaveAttribute("aria-invalid", "true");
-  await expect(passwordInput).toHaveAttribute("aria-invalid", "true");
+    const emailInput = page.getByLabel("e-mail");
+    const passwordInput = page.getByLabel("password");
+    const submitButton = page.getByText("enter");
 
-  await emailInput.fill("test123");
-  await passwordInput.fill("test123");
-  await submitButton.click();
+    await submitButton.click();
 
-  await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
-  await expect(passwordInput).toHaveAttribute("aria-invalid", undefined);
+    await expect(emailInput).toHaveAttribute("aria-invalid", "true");
+    await expect(passwordInput).toHaveAttribute("aria-invalid", "true");
 
-  await emailInput.focus();
-  await emailInput.fill("test@test.com");
-  await submitButton.click();
+    await emailInput.fill("test123");
+    await passwordInput.fill("test123");
+    await submitButton.click();
 
-  await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
+    await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
+    await expect(passwordInput).toHaveAttribute("aria-invalid", undefined);
 
-  await context.clearCookies();
-});
+    await emailInput.focus();
+    await emailInput.fill("test@test.com");
+    await submitButton.click();
 
-test("should set cookies after successfully loggin in", async ({
-  page,
-  context,
-}) => {
-  await page.goto("/auth/login");
+    await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
+  });
 
-  const emailInput = page.getByLabel("E-mail");
-  const passwordInput = page.getByLabel("Senha");
-  const submitButton = page.getByText("Entrar");
+  test("should set cookies after successfully loggin in", async ({
+    page,
+    context,
+  }) => {
+    await db.user.create({
+      data: {
+        name: testName,
+        email: testMail,
+        password: await hashPassword(testPassword),
+      },
+    });
 
-  await expect(emailInput).toBeVisible();
-  await expect(passwordInput).toBeVisible();
+    await page.goto("/auth/login");
 
-  await emailInput.fill("test@test.com");
-  await passwordInput.fill("teste123");
-  await submitButton.click();
+    const emailInput = page.getByLabel("e-mail");
+    const passwordInput = page.getByLabel("password");
+    const submitButton = page.getByText("enter");
 
-  await page.waitForURL("/");
+    await expect(emailInput).toBeVisible();
+    await expect(passwordInput).toBeVisible();
 
-  const cookies = await context.cookies();
+    const user = await db.user.findFirst();
 
-  expect(
-    cookies.find((cookie) => cookie.name === "currentUser")?.value,
-  ).toBeDefined();
+    console.log({ user });
 
-  await context.clearCookies();
+    await emailInput.fill(testMail);
+    await passwordInput.fill(testPassword);
+    await submitButton.click();
+
+    await page.waitForLoadState("networkidle");
+
+    await page.waitForURL("/");
+
+    const cookies = await context.cookies();
+
+    expect(
+      cookies.find((cookie) => cookie.name === "currentUser")?.value,
+    ).toBeDefined();
+
+    await db.user.delete({
+      where: {
+        email: testMail,
+      },
+    });
+  });
 });

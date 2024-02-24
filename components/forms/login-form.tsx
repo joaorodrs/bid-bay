@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 import { authenticate } from "@/lib/actions";
 import { InputField } from "./input-field";
@@ -21,16 +22,29 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
+  const onSubmit = async (values: LoginFormValues) => {
+    try {
+      await authenticate(JSON.stringify(values));
+    } catch (err) {
+      if (err instanceof Error) {
+        toast({
+          title: "invalid credentials",
+          description: err.message,
+        });
+      }
+    }
+  };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) =>
-          authenticate(JSON.stringify(values)),
-        )}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="m-auto flex flex-col gap-2"
       >
         <InputField name="email" label="e-mail" control={form.control} />
