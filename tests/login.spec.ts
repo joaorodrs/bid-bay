@@ -8,7 +8,7 @@ test("should render login form", async ({ page }) => {
   await expect(page.getByText("Entrar")).toBeVisible();
 });
 
-test("should validate login form values", async ({ page }) => {
+test("should validate login form values", async ({ page, context }) => {
   await page.goto("/login");
 
   const emailInput = page.getByLabel("E-mail");
@@ -32,8 +32,34 @@ test("should validate login form values", async ({ page }) => {
   await submitButton.click();
 
   await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
+
+  await context.clearCookies();
 });
 
-test("should set cookies after successfully loggin in", async ({ page }) => {
+test("should set cookies after successfully loggin in", async ({
+  page,
+  context,
+}) => {
   await page.goto("/login");
+
+  const emailInput = page.getByLabel("E-mail");
+  const passwordInput = page.getByLabel("Senha");
+  const submitButton = page.getByText("Entrar");
+
+  await expect(emailInput).toBeVisible();
+  await expect(passwordInput).toBeVisible();
+
+  await emailInput.fill("test@test.com");
+  await passwordInput.fill("teste123");
+  await submitButton.click();
+
+  await page.waitForURL("/");
+
+  const cookies = await context.cookies();
+
+  expect(
+    cookies.find((cookie) => cookie.name === "currentUser")?.value,
+  ).toBeDefined();
+
+  await context.clearCookies();
 });

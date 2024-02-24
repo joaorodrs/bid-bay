@@ -1,9 +1,10 @@
-export async function authenticate(values: any) {
-  try {
-    console.log(values);
-  } catch (err) {
-    if (err) {
-      console.log("Error: ", err);
-    }
-  }
+"use server";
+
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+export async function authenticate(body: string) {
+  cookies().set("currentUser", body);
+
+  redirect("/");
 }

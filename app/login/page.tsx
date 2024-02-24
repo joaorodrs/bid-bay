@@ -4,7 +4,6 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { LoginForm } from "@/components/forms/login-form";
 
 export default function Login() {
-  console.log("Login Page");
   return (
     <main className="flex h-screen overflow-y-auto">
       <section className="m-auto flex flex-col">
