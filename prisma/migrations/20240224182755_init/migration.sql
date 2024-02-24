@@ -2,7 +2,8 @@
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
-    "name" TEXT NOT NULL
+    "name" TEXT NOT NULL,
+    "password" TEXT NOT NULL
 );
 
 -- CreateTable

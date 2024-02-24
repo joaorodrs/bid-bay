@@ -33,15 +33,15 @@ export function LoginForm() {
         )}
         className="m-auto flex flex-col gap-2"
       >
-        <InputField name="email" label="E-mail" control={form.control} />
+        <InputField name="email" label="e-mail" control={form.control} />
         <InputField
           name="password"
           type="password"
-          label="Senha"
+          label="password"
           control={form.control}
         />
         <Button type="submit" className="mt-2">
-          Entrar
+          enter
         </Button>
       </form>
     </Form>

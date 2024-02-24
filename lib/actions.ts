@@ -5,20 +5,32 @@ import { redirect } from "next/navigation";
 import { User } from "@prisma/client";
 
 import { db } from "./database";
+import { comparePasswords, hashPassword } from "./auth";
 
 export async function authenticate(body: string) {
-  const parsedBody: User = JSON.parse(body);
+  const parsedLogin: User = JSON.parse(body);
 
   await db.$connect();
 
-  const newUser = await db.user.create({
-    data: {
-      name: parsedBody.name,
-      email: parsedBody.email,
+  const user = await db.user.findUnique({
+    where: {
+      email: parsedLogin.email,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      password: true,
     },
   });
 
-  cookies().set("currentUser", JSON.stringify(newUser));
+  if (!user) return;
+
+  const match = await comparePasswords(user.password, parsedLogin.password);
+
+  if (!match) return;
+
+  cookies().set("currentUser", JSON.stringify(user));
   await db.$disconnect();
 
   redirect("/");
@@ -33,10 +45,11 @@ export async function register(body: string) {
     data: {
       name: parsedBody.name,
       email: parsedBody.email,
+      password: await hashPassword(parsedBody.password),
     },
   });
 
   await db.$disconnect();
 
-  redirect("/login");
+  redirect("/auth/login");
 }
