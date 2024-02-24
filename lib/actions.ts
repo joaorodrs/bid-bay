@@ -10,8 +10,6 @@ import { comparePasswords, hashPassword } from "./auth";
 export async function authenticate(body: string) {
   const parsedLogin: User = JSON.parse(body);
 
-  await db.$connect();
-
   const user = await db.user.findUnique({
     where: {
       email: parsedLogin.email,
@@ -24,6 +22,8 @@ export async function authenticate(body: string) {
     },
   });
 
+  await db.$disconnect();
+
   if (!user) throw new Error("user not found, check your credentials");
 
   const match = await comparePasswords(user.password, parsedLogin.password);
@@ -31,7 +31,6 @@ export async function authenticate(body: string) {
   if (!match) throw new Error("invalid credentials");
 
   cookies().set("currentUser", JSON.stringify(user));
-  await db.$disconnect();
 
   redirect("/");
 }

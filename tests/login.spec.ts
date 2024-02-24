@@ -28,15 +28,15 @@ test.describe("login", () => {
     await expect(emailInput).toHaveAttribute("aria-invalid", "true");
     await expect(passwordInput).toHaveAttribute("aria-invalid", "true");
 
-    await emailInput.fill("test123");
-    await passwordInput.fill("test123");
+    await emailInput.fill("any@any.com");
+    await passwordInput.fill("any123");
     await submitButton.click();
 
     await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
     await expect(passwordInput).toHaveAttribute("aria-invalid", undefined);
 
     await emailInput.focus();
-    await emailInput.fill("test@test.com");
+    await emailInput.fill("any@any.com");
     await submitButton.click();
 
     await expect(emailInput).toHaveAttribute("aria-invalid", undefined);
@@ -54,6 +54,8 @@ test.describe("login", () => {
       },
     });
 
+    await db.$disconnect();
+
     await page.goto("/auth/login");
 
     const emailInput = page.getByLabel("e-mail");
@@ -63,17 +65,14 @@ test.describe("login", () => {
     await expect(emailInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
 
-    const user = await db.user.findFirst();
-
-    console.log({ user });
-
     await emailInput.fill(testMail);
     await passwordInput.fill(testPassword);
     await submitButton.click();
 
     await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
-    await page.waitForURL("/");
+    await expect(page).toHaveURL("/");
 
     const cookies = await context.cookies();
 
@@ -81,10 +80,14 @@ test.describe("login", () => {
       cookies.find((cookie) => cookie.name === "currentUser")?.value,
     ).toBeDefined();
 
+    await db.$connect();
+
     await db.user.delete({
       where: {
         email: testMail,
       },
     });
+
+    await db.$disconnect();
   });
 });
