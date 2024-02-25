@@ -6,6 +6,7 @@ import { User } from "@prisma/client";
 
 import { db } from "./database";
 import { comparePasswords, hashPassword } from "./auth";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function authenticate(body: string) {
   const parsedLogin: User = JSON.parse(body);
@@ -40,13 +41,23 @@ export async function register(body: string) {
 
   await db.$connect();
 
-  await db.user.create({
-    data: {
-      name: parsedBody.name,
-      email: parsedBody.email,
-      password: await hashPassword(parsedBody.password),
-    },
-  });
+  try {
+    await db.user.create({
+      data: {
+        name: parsedBody.name,
+        email: parsedBody.email,
+        password: await hashPassword(parsedBody.password),
+      },
+    });
+  } catch (err: any) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === "P2002") {
+        throw new Error("user already registered in");
+      }
+
+      throw new Error(err.message);
+    }
+  }
 
   await db.$disconnect();
 

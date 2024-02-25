@@ -7,11 +7,12 @@ import { z } from "zod";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 import { register } from "@/lib/actions";
 import { InputField } from "./input-field";
 
-export interface LoginFormValues {
+export interface RegisterFormValues {
   name: string;
   email: string;
   password: string;
@@ -30,16 +31,29 @@ const formSchema = z
   });
 
 export function RegisterForm() {
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
+  const onSubmit = async (values: RegisterFormValues) => {
+    try {
+      await register(JSON.stringify(values));
+    } catch (err) {
+      if (err instanceof Error) {
+        toast({
+          title: "invalid sign up info",
+          description: err.message,
+        });
+      }
+    }
+  };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) =>
-          register(JSON.stringify(values)),
-        )}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="m-auto flex flex-col gap-2"
       >
         <InputField name="name" label="name" control={form.control} />
@@ -47,6 +61,7 @@ export function RegisterForm() {
         <InputField
           name="password"
           type="password"
+          data-testid="password-field"
           label="password"
           control={form.control}
         />
@@ -60,7 +75,7 @@ export function RegisterForm() {
           {form.formState.isSubmitting ? (
             <ReloadIcon className="size-4 animate-spin" />
           ) : (
-            "register"
+            "sign up"
           )}
         </Button>
       </form>
