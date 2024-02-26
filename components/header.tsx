@@ -18,7 +18,7 @@ import { NavigationMenuItemProps } from "@radix-ui/react-navigation-menu";
 
 export function Header() {
   return (
-    <header className="flex w-full flex-col items-center justify-center pb-4">
+    <header className="sticky top-0 z-10 flex w-full flex-col items-center justify-center bg-background pb-4">
       <div className="relative h-20 w-1/2">
         <Image
           src="/logo-light.webp"
