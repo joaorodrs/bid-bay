@@ -173,3 +173,34 @@ export async function getCurrentUser() {
 
   return user;
 }
+
+export async function updateUser(body: string) {
+  const parsedBody: User = JSON.parse(body);
+  const currentUser = cookies().get("currentUser");
+
+  const user: User | undefined = currentUser
+    ? JSON.parse(currentUser?.value)
+    : undefined;
+
+  try {
+    const userResponse = await db.user.update({
+      where: {
+        id: user?.id,
+      },
+      data: {
+        email: parsedBody?.email,
+        name: parsedBody?.name,
+      },
+    });
+
+    cookies().set("currentUser", JSON.stringify(userResponse));
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      throw new Error(err.message);
+    }
+  }
+
+  await db.$disconnect();
+
+  redirect("/profile");
+}
