@@ -10,8 +10,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getPosts } from "@/lib/actions";
 
-export default function Home() {
+export default async function Home() {
+  const posts = await getPosts();
+
   return (
     <main className="flex min-h-screen flex-col items-center">
       <Header />
@@ -21,34 +24,17 @@ export default function Home() {
       </h1>
 
       <section className="mb-20 w-full space-y-4 px-4">
-        <CardComponent
-          title="acer monitor"
-          description="tech tools"
-          imageUrl="https://thispersondoesnotexist.com/"
-        />
-        <CardComponent
-          title="acer monitor"
-          description="tech tools"
-          imageUrl="https://thispersondoesnotexist.com/"
-        />
-        <CardComponent
-          title="acer monitor"
-          description="tech tools"
-          imageUrl="https://thispersondoesnotexist.com/"
-        />
-        <CardComponent
-          title="acer monitor"
-          description="tech tools"
-          imageUrl="https://thispersondoesnotexist.com/"
-        />
-        <CardComponent
-          title="acer monitor"
-          description="tech tools"
-          imageUrl="https://thispersondoesnotexist.com/"
-        />
-        <div className="flex w-full">
-          <Button className="mx-auto px-8">load more</Button>
-        </div>
+        {posts?.map((post) => (
+          <CardComponent
+            key={post.id}
+            title={post.title}
+            description={post.description}
+            imageUrl={post.content}
+          />
+        ))}
+        {/* <div className="flex w-full"> */}
+        {/*   <Button className="mx-auto px-8">load more</Button> */}
+        {/* </div> */}
       </section>
     </main>
   );

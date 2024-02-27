@@ -63,3 +63,28 @@ export async function register(body: string) {
 
   redirect("/auth/login");
 }
+
+export async function getPosts() {
+  try {
+    const posts = await db.post.findMany({
+      orderBy: {
+        published: "asc",
+      },
+      select: {
+        id: true,
+        title: true,
+        published: true,
+        content: true,
+        description: true,
+      },
+    });
+
+    return posts;
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      throw new Error(err.message);
+    }
+  }
+
+  await db.$disconnect();
+}
