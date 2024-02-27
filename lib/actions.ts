@@ -114,3 +114,26 @@ export async function createPost(body: string) {
 
   redirect("/");
 }
+
+export async function getTags() {
+  try {
+    const tags = await db.tag.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+      },
+    });
+
+    return tags;
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      throw new Error(err.message);
+    }
+  }
+
+  await db.$disconnect();
+}

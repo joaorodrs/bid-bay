@@ -51,7 +51,12 @@ const CardComponent = ({ title, description, imageUrl }: ICardComponent) => (
       <CardDescription>{description}</CardDescription>
     </CardHeader>
     <CardContent className="relative h-64 sm:w-1/2">
-      <Image src={imageUrl} alt={title} fill className="sm:rounded-r-xl" />
+      <Image
+        src={imageUrl}
+        alt={title}
+        fill
+        className="rounded-b-xl sm:rounded-l-none sm:rounded-r-xl"
+      />
     </CardContent>
   </Card>
 );
