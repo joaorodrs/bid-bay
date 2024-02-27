@@ -37,7 +37,7 @@ export function PostForm() {
     } catch (err) {
       if (err instanceof Error) {
         toast({
-          title: "invalid sign up info",
+          title: "invalid post info",
           description: err.message,
         });
       }
