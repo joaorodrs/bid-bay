@@ -7,6 +7,7 @@ import { User } from "@prisma/client";
 import { db } from "./database";
 import { comparePasswords, hashPassword } from "./auth";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function authenticate(body: string) {
   const parsedLogin: User = JSON.parse(body);
@@ -87,4 +88,30 @@ export async function getPosts() {
   }
 
   await db.$disconnect();
+}
+
+export async function createPost(body: string) {
+  const parsedBody = JSON.parse(body);
+  const currentUser = cookies().get("currentUser");
+
+  const user: User | undefined = currentUser
+    ? JSON.parse(currentUser?.value)
+    : undefined;
+
+  try {
+    await db.post.create({
+      data: {
+        ...parsedBody,
+        authorId: user?.id,
+      },
+    });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      throw new Error(err.message);
+    }
+  }
+
+  await db.$disconnect();
+
+  redirect("/");
 }
