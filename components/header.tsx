@@ -19,7 +19,7 @@ import { NavigationMenuItemProps } from "@radix-ui/react-navigation-menu";
 export function Header() {
   return (
     <header className="sticky top-0 z-10 flex w-full flex-col items-center justify-center bg-background pb-4">
-      <div className="relative h-20 w-1/2">
+      <div className="relative h-20 w-1/2 max-w-[250px]">
         <Image
           src="/logo-light.webp"
           alt="bid bay"
@@ -31,11 +31,11 @@ export function Header() {
         <NavigationMenuList>
           <NavigationItem title="home">
             <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <ListItem href="/" title="for you">
-                posts from tags you follow
-              </ListItem>
-              <ListItem href="/#recents" title="recents">
+              <ListItem href="/" title="recents">
                 the most recent posts in our site
+              </ListItem>
+              <ListItem href="/new" title="create">
+                create a post
               </ListItem>
             </ul>
           </NavigationItem>
