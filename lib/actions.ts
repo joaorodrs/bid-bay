@@ -163,3 +163,13 @@ export async function createTag(body: string) {
 
   redirect("/tags");
 }
+
+export async function getCurrentUser() {
+  const currentUser = cookies().get("currentUser");
+
+  const user: User | undefined = currentUser
+    ? JSON.parse(currentUser?.value)
+    : undefined;
+
+  return user;
+}
