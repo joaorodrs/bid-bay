@@ -7,7 +7,6 @@ import { User } from "@prisma/client";
 import { db } from "./database";
 import { comparePasswords, hashPassword } from "./auth";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function authenticate(body: string) {
   const parsedLogin: User = JSON.parse(body);
