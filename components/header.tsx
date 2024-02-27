@@ -44,7 +44,7 @@ export function Header() {
               <ListItem href="/tags" title="best tags">
                 tags that people like
               </ListItem>
-              <ListItem href="/tags" title="create tag">
+              <ListItem href="/tags/new" title="create tag">
                 create your own tag if you feel like
               </ListItem>
             </ul>

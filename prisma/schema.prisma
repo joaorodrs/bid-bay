@@ -16,6 +16,7 @@ model User {
   name     String
   password String
   posts    Post[]
+  tags     Tag[]
 }
 
 model Post {
@@ -34,4 +35,6 @@ model Tag {
   name      String
   createdAt DateTime @default(now())
   posts     Post[]
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
 }

@@ -137,3 +137,29 @@ export async function getTags() {
 
   await db.$disconnect();
 }
+
+export async function createTag(body: string) {
+  const parsedBody = JSON.parse(body);
+  const currentUser = cookies().get("currentUser");
+
+  const user: User | undefined = currentUser
+    ? JSON.parse(currentUser?.value)
+    : undefined;
+
+  try {
+    await db.tag.create({
+      data: {
+        ...parsedBody,
+        authorId: user?.id,
+      },
+    });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      throw new Error(err.message);
+    }
+  }
+
+  await db.$disconnect();
+
+  redirect("/tags");
+}
