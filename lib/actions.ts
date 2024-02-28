@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { User } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 
 import { db } from "./database";
 import { comparePasswords, hashPassword } from "./auth";
@@ -76,6 +76,7 @@ export async function getPosts() {
         published: true,
         content: true,
         description: true,
+        tag: true,
       },
     });
 
@@ -90,7 +91,7 @@ export async function getPosts() {
 }
 
 export async function createPost(body: string) {
-  const parsedBody = JSON.parse(body);
+  const parsedBody: Post = JSON.parse(body);
   const currentUser = cookies().get("currentUser");
 
   const user: User | undefined = currentUser
@@ -101,13 +102,16 @@ export async function createPost(body: string) {
     await db.post.create({
       data: {
         ...parsedBody,
-        authorId: user?.id,
+        tagId: parseInt(String(parsedBody?.tagId)),
+        authorId: user?.id || "",
       },
     });
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       throw new Error(err.message);
     }
+
+    throw new Error("unkown error");
   }
 
   await db.$disconnect();
