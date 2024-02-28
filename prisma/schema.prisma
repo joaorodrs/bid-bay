@@ -27,7 +27,8 @@ model Post {
   published    Boolean @default(false)
   authorId     String
   author       User    @relation(fields: [authorId], references: [id])
-  tags         Tag[]
+  tagId        Int
+  tag          Tag     @relation(fields: [tagId], references: [id])
 }
 
 model Tag {
