@@ -10,7 +10,8 @@
     "lint": "next lint",
     "migrate:dev": "env-cmd -f .env.dev.local prisma migrate dev --name init",
     "test": "env-cmd -f .env.test.local prisma db push --force-reset && env-cmd -f .env.test.local playwright test",
-    "test-report": "playwright show-report"
+    "test-report": "playwright show-report",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
