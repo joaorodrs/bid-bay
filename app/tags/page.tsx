@@ -8,7 +8,6 @@ export default async function Tags() {
   return (
     <main className="flex min-h-screen flex-col items-center">
       <Header />
-
       <h1 className="text-2xl font-bold">tags.</h1>
 
       <section className="mt-4 flex flex-wrap px-4">
