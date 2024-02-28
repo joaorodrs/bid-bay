@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 import { authenticate } from "@/lib/actions";
 import { InputField } from "./input-field";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export interface LoginFormValues {
   email: string;
@@ -55,7 +56,11 @@ export function LoginForm() {
           control={form.control}
         />
         <Button type="submit" className="mt-2">
-          enter
+          {form.formState.isSubmitting ? (
+            <ReloadIcon className="size-4 animate-spin" />
+          ) : (
+            "enter"
+          )}
         </Button>
       </form>
     </Form>

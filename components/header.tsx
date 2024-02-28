@@ -21,7 +21,7 @@ export function Header() {
     <header className="sticky top-0 z-10 flex w-full flex-col items-center justify-center bg-background pb-4">
       <div className="relative h-20 w-1/2 max-w-[250px]">
         <Image
-          src="/logo-light.webp"
+          src="/logo-dark.webp"
           alt="bid bay"
           fill
           className="object-cover"
@@ -41,8 +41,8 @@ export function Header() {
           </NavigationItem>
           <NavigationItem title="tags">
             <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <ListItem href="/tags" title="best tags">
-                tags that people like
+              <ListItem href="/tags" title="all tags">
+                list all tags
               </ListItem>
               <ListItem href="/tags/new" title="create tag">
                 create your own tag if you feel like
