@@ -9,7 +9,7 @@ export default function Login() {
     <main className="flex h-screen overflow-y-auto">
       <section className="m-auto flex flex-col">
         <AspectRatio ratio={1 / 1}>
-          <Image src="/logo-light.webp" alt="BidBay" fill />
+          <Image src="/logo-dark.webp" alt="BidBay" fill />
         </AspectRatio>
         <LoginForm />
         <Link
